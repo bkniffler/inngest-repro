@@ -3,7 +3,6 @@ import { random } from '@finalytic/utils';
 import { serve } from 'inngest/cloudflare';
 import { waitUntilFree, waitUntilUsed } from 'tcp-port-used';
 import kill from 'terminate/promise';
-import { useInngestFns } from './fns';
 import { useInngest } from './inngest';
 import { inngestRegisterApp } from './inngest-internal-api';
 
@@ -58,7 +57,10 @@ export async function useMockInngest() {
 
   const server = Bun.serve({
     fetch(request) {
-      const s = useInngestFns(inngest);
+      const s = serve({
+        client: inngest,
+        functions: [],
+      });
       return s({
         request,
         env: process.env,
