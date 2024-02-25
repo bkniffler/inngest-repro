@@ -1,6 +1,5 @@
 import { spawn } from 'child_process';
 import { random } from '@finalytic/utils';
-import type { Inngest } from 'inngest';
 import { serve } from 'inngest/cloudflare';
 import { waitUntilFree, waitUntilUsed } from 'tcp-port-used';
 import kill from 'terminate/promise';
@@ -21,9 +20,8 @@ export async function registerFn(
     inngest: any;
     inngestBaseUrl: string;
   },
-  worker: { fns: (inngest: Inngest) => any[] }
+  functions: any[]
 ) {
-  const functions = worker.fns(inn.inngest);
   const s = serve({
     functions,
     client: inn.inngest,

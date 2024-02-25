@@ -17,55 +17,53 @@ describe('e2e setup-guide handle-accounts', () => {
       const expected = 5;
       let invoked = 0;
 
-      await registerFn(mockInngest, {
-        fns: (inngest) => [
-          inngest.createFunction(
-            { id: 'trigger' },
-            { event: 'api/trigger' },
-            async ({ logger }) => {
-              logger.info('triggered');
-              await waitFor('1s');
-              return northbase;
-            }
-          ),
-          inngest.createFunction(
-            { id: 'invoke' },
-            { event: 'api/invoke' },
-            async ({ event, step, logger }) => {
-              logger.info('invoked');
-              await waitFor('1s');
+      await registerFn(mockInngest, [
+        mockInngest.inngest.createFunction(
+          { id: 'trigger' },
+          { event: 'api/trigger' },
+          async ({ logger }) => {
+            logger.info('triggered');
+            await waitFor('1s');
+            return northbase;
+          }
+        ),
+        mockInngest.inngest.createFunction(
+          { id: 'invoke' },
+          { event: 'api/invoke' },
+          async ({ event, step, logger }) => {
+            logger.info('invoked');
+            await waitFor('1s');
 
-              await step.sendEvent('api/trigger', {
-                data: event.data,
-                name: 'api/trigger',
-              });
+            await step.sendEvent('api/trigger', {
+              data: event.data,
+              name: 'api/trigger',
+            });
 
-              invoked++;
-              return northbase;
-            }
-          ),
-          inngest.createFunction(
-            { id: 'caller' },
-            { event: 'api/call' },
-            async ({ step, logger }) => {
-              logger.info('Starting');
-              const all = new Array(expected).fill(null).map((_, i) => {
-                return () =>
-                  step.invoke(`run ${i}`, {
-                    function: referenceFunction({ functionId: 'invoke' }),
-                    data: { i },
-                  });
-              });
+            invoked++;
+            return northbase;
+          }
+        ),
+        mockInngest.inngest.createFunction(
+          { id: 'caller' },
+          { event: 'api/call' },
+          async ({ step, logger }) => {
+            logger.info('Starting');
+            const all = new Array(expected).fill(null).map((_, i) => {
+              return () =>
+                step.invoke(`run ${i}`, {
+                  function: referenceFunction({ functionId: 'invoke' }),
+                  data: { i },
+                });
+            });
 
-              for (const p of all) {
-                logger.info('running');
-                await p();
-              }
-              logger.info('All done');
+            for (const p of all) {
+              logger.info('running');
+              await p();
             }
-          ),
-        ],
-      });
+            logger.info('All done');
+          }
+        ),
+      ]);
 
       await mockInngest.inngest.send({ name: 'api/call' });
       await waitUntil(() => invoked === expected, { timeoutAfter: '20s' });
