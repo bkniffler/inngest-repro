@@ -67,8 +67,10 @@ describe('e2e setup-guide handle-accounts', () => {
 
       await mockInngest.inngest.send({ name: 'api/call' });
       await waitUntil(() => invoked === expected, { timeoutAfter: '20s' });
+
+      await waitFor('60s');
       expect(invoked).toBe(expected);
     },
-    { timeout: 30_000 }
+    { timeout: 90_000 }
   );
 });

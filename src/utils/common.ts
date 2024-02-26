@@ -36,7 +36,7 @@ export async function registerFn(
     port: getNextPort(),
   });
   await waitUntilUsed(Number(server.port), 100, 8_000);
-  await inngestRegisterApp(inn.inngestBaseUrl, server.port);
+  await inngestRegisterApp(server.port);
   return () => server.stop();
 }
 
