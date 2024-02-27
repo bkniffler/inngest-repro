@@ -2,12 +2,10 @@
   "name": "inngest-repro",
   "module": "index.ts",
   "type": "module",
-  "trustedDependencies": [
-    "inngest-cli"
-  ],
+  "trustedDependencies": ["inngest-cli"],
   "devDependencies": {
     "@biomejs/biome": "1.5.3",
-    "inngest-cli": "0.26.1",
+    "inngest-cli": "0.26.2",
     "@types/tcp-port-used": "^1.0.4",
     "@types/bun": "latest"
   },
@@ -16,7 +14,7 @@
   },
   "dependencies": {
     "@finalytic/utils": "^4.7.54",
-    "inngest": "^3.15.0",
+    "inngest": "^3.15.1",
     "tcp-port-used": "^1.0.2",
     "terminate": "^2.6.1"
   }
